@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Car.API.Data
 {
     public interface ICarRepository
     {
 
-        string Save(Entities.Car car);
+        Task<string> SaveAsync(Entities.Car car);
 
-        Entities.Car Get(Guid id);
+        Task<Entities.Car> GetAsync(Guid id);
 
-        bool Delete(Guid id);
+        Task<bool> DeleteAsync(Guid id);
 
-        IEnumerable<Entities.Car> List();
+        Task<IEnumerable<Entities.Car>> ListAsync();
 
-        IEnumerable<Entities.Car> Search(string query);
+        Task<IEnumerable<Entities.Car>> SearchAsync(string query);
 
     }
 }

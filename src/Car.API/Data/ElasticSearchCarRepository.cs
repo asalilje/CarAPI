@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
+using System.Threading.Tasks;
 using Nest;
-using Newtonsoft.Json.Converters;
 
 namespace Car.API.Data
 {
@@ -13,43 +12,42 @@ namespace Car.API.Data
        
         public ElasticSearchCarRepository(ElasticClient elasticClient)
         {
-            _elasticClient = elasticClient;
-
+            _elasticClient = new ElasticClient(new ConnectionSettings(new Uri("http://mac.localhost:9200"), "cars"));//= elasticClient;
         }
 
-       
-        public string Save(Entities.Car car)
+
+        public async Task<string> SaveAsync(Entities.Car car)
         {
-            var result = _elasticClient.Index(car);
+            var result = await _elasticClient.IndexAsync(car);
             return result.Id;
         }
 
-            
-        public Entities.Car Get(Guid id)
+
+        public async Task<Entities.Car> GetAsync(Guid id)
         {
-            var result = _elasticClient.Get<Entities.Car>(id.ToString());
+            var result = await _elasticClient.GetAsync<Entities.Car>(id.ToString());
             return result.Source;
         }
 
 
-        public bool Delete(Guid id)
+        public async Task<bool> DeleteAsync(Guid id)
         {
-            var result = _elasticClient.Delete<Entities.Car>(id.ToString(), x => x.Type("car"));
+            var result = await _elasticClient.DeleteAsync<Entities.Car>(id.ToString(), x => x.Type("car"));
             return result.Found;
         }
 
-        public IEnumerable<Entities.Car> List()
+        public async Task<IEnumerable<Entities.Car>> ListAsync()
         {
-            var result = _elasticClient.Search<Entities.Car>(search => search
+            var result = await _elasticClient.SearchAsync<Entities.Car>(search => search
                 .From(0)
                 .MatchAll());
 
             return result.Documents;
         }
 
-        public IEnumerable<Entities.Car> Search(string query)
+        public async Task<IEnumerable<Entities.Car>> SearchAsync(string query)
         {
-            var result = _elasticClient.Search<Entities.Car>(search => search
+            var result = await _elasticClient.SearchAsync<Entities.Car>(search => search
                 .From(0)
                 .QueryString(query));
 

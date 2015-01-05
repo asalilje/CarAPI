@@ -17,7 +17,7 @@ namespace Car.API.Modules
 
         private object ListCars()
         {
-            return _carRepository.List();
+            return _carRepository.ListAsync();
         }
     }
 }

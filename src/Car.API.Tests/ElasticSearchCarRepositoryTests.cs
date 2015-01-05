@@ -29,7 +29,7 @@ namespace Car.API.Tests
                 .WithCarType(CarType.Premium).Build();
 
             // when 
-            var result = _fixture.Repository.Save(car);
+            var result = _fixture.Repository.SaveAsync(car).Result;
 
             // then
             result.Should().Be(carId.ToString());
@@ -45,9 +45,9 @@ namespace Car.API.Tests
                 .WithMake("Ford Focus").Build();
 
             // when 
-            var result = _fixture.Repository.Save(car);
-            var indexedCar = _fixture.Repository.Get(Guid.Parse(result));
-            var updatedResult = _fixture.Repository.Save(indexedCar);
+            var result = _fixture.Repository.SaveAsync(car).Result;
+            var indexedCar = _fixture.Repository.GetAsync(Guid.Parse(result)).Result;
+            var updatedResult = _fixture.Repository.SaveAsync(indexedCar).Result;
 
 
             // then
@@ -67,9 +67,9 @@ namespace Car.API.Tests
                 .WithCarType(CarType.Premium).Build();
 
             // when 
-            var result = _fixture.Repository.Save(car);
+            var result = _fixture.Repository.SaveAsync(car).Result;
             var resultGuid = Guid.Parse(result);
-            var indexedCar = _fixture.Repository.Get(resultGuid);
+            var indexedCar = _fixture.Repository.GetAsync(resultGuid).Result;
 
             // then
             resultGuid.Should().Be(carId);
@@ -88,8 +88,8 @@ namespace Car.API.Tests
                 .WithMake("Ford Focus").Build();
 
             // when
-            var result = _fixture.Repository.Save(car);
-            var deleted = _fixture.Repository.Delete(Guid.Parse(result));
+            var result = _fixture.Repository.SaveAsync(car).Result;
+            var deleted = _fixture.Repository.DeleteAsync(Guid.Parse(result)).Result;
 
             // then
             deleted.Should().BeTrue();
@@ -102,12 +102,12 @@ namespace Car.API.Tests
             for (var i = 0; i < 3; i++)
             {
                 var carId = Guid.NewGuid();
-                _fixture.Repository.Save(CarBuilder.CreateCar().WithId(carId).WithMake("Ford Focus").Build());
+                _fixture.Repository.SaveAsync(CarBuilder.CreateCar().WithId(carId).WithMake("Ford Focus").Build());
             }
             Thread.Sleep(2000);
 
             // when
-            var result = _fixture.Repository.List();
+            var result = _fixture.Repository.ListAsync().Result;
 
             // then
             result.Count().Should().BeGreaterOrEqualTo(3);
@@ -121,12 +121,12 @@ namespace Car.API.Tests
             for (var i = 0; i < 3; i++)
             {
                 var carId = Guid.NewGuid();
-                _fixture.Repository.Save(CarBuilder.CreateCar().WithId(carId).WithMake("My Test Car").WithBagCount(i + 2).Build());
+                _fixture.Repository.SaveAsync(CarBuilder.CreateCar().WithId(carId).WithMake("My Test Car").WithBagCount(i + 2).Build());
             }
             Thread.Sleep(2000);
 
             // when
-            var result = _fixture.Repository.Search("my test");
+            var result = _fixture.Repository.SearchAsync("my test").Result;
             
             // then
             result.Count().Should().Be(3);
